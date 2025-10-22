@@ -22,6 +22,11 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 // ✅ Base route
 app.get("/", (_, res) => res.send("🚀 GitDiagram Backend API is running!"));
 
+// Health check route
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", message: "Server running" });
+});
+
 // ✅ API routes
 app.use("/api/repository", repositoryRouter);
 app.use("/api/diagram", diagramRouter);
