@@ -6,6 +6,7 @@ import diagramRouter from "./routes/diagram";
 import { connectDB } from "./config/db";
 import noteRoutes from "./routes/noteRoutes";
 import diagramRoutes from "./routes/diagramRoutes";
+import authRoutes from "./routes/authRoutes";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use("/api/repository", repositoryRouter);
 app.use("/api/diagram", diagramRouter);
 app.use("/api/notes", noteRoutes);
 app.use("/api/diagram", diagramRoutes);
+app.use("/api/auth", authRoutes);
 
 const PORT = process.env.PORT || 5000;
 

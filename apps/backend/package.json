@@ -11,16 +11,21 @@
   "dependencies": {
     "@types/node": "^22.6.1",
     "axios": "^1.6.8",
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "glob": "^11.0.3",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.1",
     "node-cache": "^5.1.2"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/mongoose": "^5.11.97",
     "@types/node-cache": "^4.2.5",
     "typescript": "^5.6.3"
