@@ -1,135 +1,151 @@
-# Turborepo starter
+# 🧩 GitDiagram — Visualize Your Git Repositories
 
-This Turborepo starter is maintained by the Turborepo core team.
+**GitDiagram** is a full-stack web application that automatically visualizes Git repositories as interactive node-based diagrams.  
+It allows users to log in securely, load repositories, explore commit relationships, and save diagrams — all powered by **Next.js**, **Express**, and **MongoDB**.
 
-## Using this example
+---
 
-Run the following command:
+## 🚀 Tech Stack
 
-```sh
-npx create-turbo@latest
-```
+### 🖥️ Frontend
+- [Next.js 16 (App Router)](https://nextjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [React Flow](https://reactflow.dev/) for interactive diagrams
+- Tailwind CSS for modern UI
+- Axios for API requests
 
-## What's inside?
+### ⚙️ Backend
+- Node.js + Express
+- MongoDB + Mongoose
+- JWT Authentication
+- TypeScript
+- RESTful APIs
 
-This Turborepo includes the following packages/apps:
+### ☁️ Deployment
+- **Frontend:** [Vercel](https://vercel.com)
+- **Backend:** [Render](https://render.com)
+- **Database:** MongoDB Atlas
 
-### Apps and Packages
+---
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+## 🌐 Live Demo
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- **Frontend (Vercel):** [https://gitdiagram.vercel.app](https://gitdiagram.vercel.app)
+- **Backend API (Render):** [https://gitdiagram-pk6l.onrender.com](https://gitdiagram-pk6l.onrender.com)
 
-### Utilities
+---
 
-This Turborepo has some additional tools already setup for you:
+## 🛠️ Project Setup (Local Development)
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+### 1. Clone the repository
 
-### Build
+```bash
+git clone https://github.com/rajsh7/GitDiagram.git
+cd GitDiagram
+2. Setup environment variables
+Create .env files for both backend and frontend.
 
-To build all apps and packages, run the following command:
+🧩 Backend (apps/backend/.env)
+env
+Copy code
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_generated_jwt_secret
+💡 To generate a strong JWT secret, run this in your terminal:
 
-```
-cd my-turborepo
+bash
+Copy code
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+🖥️ Frontend (apps/frontend/.env.local)
+env
+Copy code
+NEXT_PUBLIC_API_BASE=https://gitdiagram-pk6l.onrender.com/api
+3. Install dependencies
+From the project root:
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+bash
+Copy code
+npm install
+Or install individually:
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+bash
+Copy code
+cd apps/backend && npm install
+cd ../frontend && npm install
+4. Run the development servers
+Backend:
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+bash
+Copy code
+cd apps/backend
+npm run dev
+Frontend:
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+bash
+Copy code
+cd apps/frontend
+npm run dev
+Then open your browser to http://localhost:3000
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+🔐 Authentication
+GitDiagram uses JWT-based authentication.
 
-### Develop
+Register → /auth/register
 
-To develop all apps and packages, run the following command:
+Login → /auth/login
 
-```
-cd my-turborepo
+Access protected routes using Authorization: Bearer <token>
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+Tokens are stored securely in browser localStorage.
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+🧠 Core Features
+✅ Register & Login with JWT
+✅ Load GitHub repositories
+✅ Auto-generate diagrams for commits/branches
+✅ Add, edit, and save notes
+✅ Save user diagrams in MongoDB
+✅ Load previously saved diagrams
+✅ Deployed full-stack on Render (API) + Vercel (Frontend)
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+🧩 API Endpoints
+Method	Endpoint	Description
+POST	/api/auth/register	Register new user
+POST	/api/auth/login	Login user and get JWT
+GET	/api/repository/:name	Get Git repository structure
+POST	/api/diagram	Save diagram
+GET	/api/diagram/:repo	Load diagram
+POST	/api/notes/:repo	Save notes
+GET	/api/notes/:repo	Get notes
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+🧱 Folder Structure
+lua
+Copy code
+GitDiagram/
+├── apps/
+│   ├── backend/
+│   │   ├── src/
+│   │   │   ├── models/
+│   │   │   ├── controllers/
+│   │   │   ├── routes/
+│   │   │   ├── middleware/
+│   │   │   └── config/
+│   │   └── index.ts
+│   └── frontend/
+│       ├── app/
+│       ├── components/
+│       ├── lib/
+│       └── styles/
+└── package.json
+📸 Screenshots (Optional)
+Add screenshots or demo GIFs here once available.
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+👨‍💻 Author
+Raj
+Full-Stack Developer
+🔗 GitHub: @rajsh7
 
-### Remote Caching
+🪪 License
+This project is licensed under the MIT License.
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+💬 Feedback
+If you have suggestions or ideas, feel free to open an issue or submit a pull request!
