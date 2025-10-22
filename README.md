@@ -30,7 +30,7 @@ It allows users to log in securely, load repositories, explore commit relationsh
 
 ## 🌐 Live Demo
 
-- **Frontend (Vercel):** [https://gitdiagram.vercel.app](https://gitdiagram.vercel.app)
+- **Frontend (Vercel):** [https://git-diagram-frontend.vercel.app/](https://git-diagram-frontend.vercel.app/)
 - **Backend API (Render):** [https://gitdiagram-pk6l.onrender.com](https://gitdiagram-pk6l.onrender.com)
 
 ---
