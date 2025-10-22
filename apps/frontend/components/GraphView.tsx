@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
+import dynamic from "next/dynamic";
 import ReactFlow, {
   Background,
   Controls,
@@ -10,19 +11,9 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import axios from "axios";
-import Modal from "react-modal";
 
-/** ✅ Safe Modal Initialization for Next.js (client-side only) */
-if (typeof window !== "undefined") {
-  const appRoot =
-    document.getElementById("__next") ||
-    document.getElementById("root") ||
-    document.body;
-  Modal.setAppElement(appRoot);
-}
-
-/** ✅ Backend Base URL (Render Deployment) */
-const API_BASE_URL = "https://gitdiagram-pk6l.onrender.com";
+/** ✅ Dynamically import react-modal to avoid SSR issues */
+const Modal = dynamic(() => import("react-modal"), { ssr: false });
 
 interface GraphData {
   nodes: Node[];
@@ -35,12 +26,23 @@ function GraphViewInner({ repo }: { repo: string }) {
   const [error, setError] = useState("");
   const [isSaved, setIsSaved] = useState(false);
 
-  // Notes state
+  // Notes
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [noteContent, setNoteContent] = useState("");
 
-  /** 🔹 Fetch graph + notes (handles 404s gracefully) */
+  /** 🔹 Safe Modal Initialization */
+  useEffect(() => {
+    if (typeof window !== "undefined" && (Modal as any).setAppElement) {
+      const root =
+        document.getElementById("__next") ||
+        document.getElementById("root") ||
+        document.body;
+      (Modal as any).setAppElement(root);
+    }
+  }, []);
+
+  /** 🔹 Fetch graph + notes */
   const fetchGraph = useCallback(async () => {
     try {
       setLoading(true);
@@ -49,27 +51,24 @@ function GraphViewInner({ repo }: { repo: string }) {
       let graphData: GraphData = { nodes: [], edges: [] };
       let noteData: any[] = [];
 
-      // Fetch diagram (safe)
       try {
-        const graphRes = await axios.get(`${API_BASE_URL}/api/diagram/${repo}`);
+        const graphRes = await axios.get(
+          `https://gitdiagram-pk6l.onrender.com/api/diagram/${repo}`
+        );
         graphData = graphRes.data.graph;
       } catch (err: any) {
-        if (err.response?.status === 404) {
-          console.warn("⚠️ No diagram found, starting with empty graph.");
-        } else throw err;
+        if (err.response?.status === 404) console.warn("No diagram found");
       }
 
-      // Fetch notes (safe)
       try {
-        const notesRes = await axios.get(`${API_BASE_URL}/api/notes/${repo}`);
+        const notesRes = await axios.get(
+          `https://gitdiagram-pk6l.onrender.com/api/notes/${repo}`
+        );
         noteData = notesRes.data;
       } catch (err: any) {
-        if (err.response?.status === 404) {
-          console.warn("⚠️ No notes found, skipping.");
-        } else throw err;
+        if (err.response?.status === 404) console.warn("No notes found");
       }
 
-      // Build nodes
       const nodes = (graphData.nodes || []).map((n: any) => ({
         id: n.id,
         position: { x: n.x, y: n.y },
@@ -85,14 +84,12 @@ function GraphViewInner({ repo }: { repo: string }) {
         },
       }));
 
-      // Build edges
       const edges = (graphData.edges || []).map((e: any) => ({
         id: `${e.source}-${e.target}`,
         source: e.source,
         target: e.target,
       }));
 
-      // Map notes
       const noteMap: Record<string, string> = {};
       noteData.forEach((n: any) => (noteMap[n.nodeId] = n.content));
 
@@ -111,7 +108,10 @@ function GraphViewInner({ repo }: { repo: string }) {
   const saveGraph = async () => {
     if (!graph) return;
     try {
-      await axios.post(`${API_BASE_URL}/api/diagram`, { repo, graph });
+      await axios.post(`https://gitdiagram-pk6l.onrender.com/api/diagram`, {
+        repo,
+        graph,
+      });
       setIsSaved(true);
       alert("✅ Diagram saved successfully!");
     } catch (err) {
@@ -120,34 +120,11 @@ function GraphViewInner({ repo }: { repo: string }) {
     }
   };
 
-  /** 🔹 Load saved graph */
-  const loadSavedGraph = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get(`${API_BASE_URL}/api/diagram/saved/${repo}`);
-      const saved = res.data.data?.graph;
-
-      if (!saved) {
-        alert("No saved diagram found.");
-        return;
-      }
-
-      setGraph(saved);
-      setIsSaved(true);
-      alert("📂 Loaded saved diagram!");
-    } catch (err) {
-      console.error(err);
-      alert("❌ Failed to load saved diagram.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /** 🔹 Save note */
+  /** 🔹 Note handlers */
   const handleSaveNote = async () => {
     if (!selectedNode) return;
     try {
-      await axios.post(`${API_BASE_URL}/api/notes`, {
+      await axios.post(`https://gitdiagram-pk6l.onrender.com/api/notes`, {
         repo,
         nodeId: selectedNode.id,
         content: noteContent,
@@ -161,12 +138,11 @@ function GraphViewInner({ repo }: { repo: string }) {
     }
   };
 
-  /** 🔹 Delete note */
   const handleDeleteNote = async () => {
     if (!selectedNode) return;
     try {
       await axios.delete(
-        `${API_BASE_URL}/api/notes/${repo}/${selectedNode.id}`
+        `https://gitdiagram-pk6l.onrender.com/api/notes/${repo}/${selectedNode.id}`
       );
       setNotes((prev) => {
         const newNotes = { ...prev };
@@ -181,7 +157,6 @@ function GraphViewInner({ repo }: { repo: string }) {
     }
   };
 
-  /** 🔹 On node click → open modal */
   const onNodeClick = (_: any, node: Node) => {
     setSelectedNode(node);
     setNoteContent(notes[node.id] || "");
@@ -216,13 +191,6 @@ function GraphViewInner({ repo }: { repo: string }) {
         >
           💾 {isSaved ? "Saved" : "Save"}
         </button>
-
-        <button
-          onClick={loadSavedGraph}
-          className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-md"
-        >
-          📂 Load
-        </button>
       </div>
 
       {/* Diagram */}
@@ -237,50 +205,52 @@ function GraphViewInner({ repo }: { repo: string }) {
         <Background />
       </ReactFlow>
 
-      {/* 📝 Note Modal */}
-      <Modal
-        isOpen={!!selectedNode}
-        onRequestClose={() => setSelectedNode(null)}
-        style={{
-          overlay: { backgroundColor: "rgba(0,0,0,0.6)" },
-          content: {
-            maxWidth: "400px",
-            margin: "auto",
-            borderRadius: "10px",
-            padding: "20px",
-          },
-        }}
-      >
-        <h2 className="text-lg font-bold mb-2">
-          Notes for:{" "}
-          <span className="text-blue-600">{selectedNode?.data?.label}</span>
-        </h2>
-        <textarea
-          className="w-full border rounded p-2 h-32 text-black"
-          value={noteContent}
-          onChange={(e) => setNoteContent(e.target.value)}
-          placeholder="Write your note here..."
-        />
-        <div className="flex justify-end mt-3 space-x-2">
-          <button
-            onClick={handleDeleteNote}
-            className="bg-red-500 text-white px-3 py-1 rounded"
-          >
-            Delete
-          </button>
-          <button
-            onClick={handleSaveNote}
-            className="bg-green-600 text-white px-3 py-1 rounded"
-          >
-            Save
-          </button>
-        </div>
-      </Modal>
+      {/* 📝 Modal */}
+      {!!selectedNode && (
+        <Modal
+          isOpen={!!selectedNode}
+          onRequestClose={() => setSelectedNode(null)}
+          style={{
+            overlay: { backgroundColor: "rgba(0,0,0,0.6)" },
+            content: {
+              maxWidth: "400px",
+              margin: "auto",
+              borderRadius: "10px",
+              padding: "20px",
+            },
+          }}
+        >
+          <h2 className="text-lg font-bold mb-2">
+            Notes for:{" "}
+            <span className="text-blue-600">{selectedNode?.data?.label}</span>
+          </h2>
+          <textarea
+            className="w-full border rounded p-2 h-32 text-black"
+            value={noteContent}
+            onChange={(e) => setNoteContent(e.target.value)}
+            placeholder="Write your note here..."
+          />
+          <div className="flex justify-end mt-3 space-x-2">
+            <button
+              onClick={handleDeleteNote}
+              className="bg-red-500 text-white px-3 py-1 rounded"
+            >
+              Delete
+            </button>
+            <button
+              onClick={handleSaveNote}
+              className="bg-green-600 text-white px-3 py-1 rounded"
+            >
+              Save
+            </button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }
 
-/** ✅ Wrap in ReactFlowProvider */
+/** ✅ Export wrapped provider */
 export default function GraphView({ repo }: { repo: string }) {
   return (
     <ReactFlowProvider>
