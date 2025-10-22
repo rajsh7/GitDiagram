@@ -12,7 +12,7 @@ import "reactflow/dist/style.css";
 import axios from "axios";
 import Modal from "react-modal";
 
-/** ✅ Safe Modal Initialization (works for Next.js 13–16) */
+/** ✅ Safe Modal Initialization for Next.js (client-side only) */
 if (typeof window !== "undefined") {
   const appRoot =
     document.getElementById("__next") ||
@@ -20,6 +20,9 @@ if (typeof window !== "undefined") {
     document.body;
   Modal.setAppElement(appRoot);
 }
+
+/** ✅ Backend Base URL (Render Deployment) */
+const API_BASE_URL = "https://gitdiagram-pk6l.onrender.com";
 
 interface GraphData {
   nodes: Node[];
@@ -46,11 +49,9 @@ function GraphViewInner({ repo }: { repo: string }) {
       let graphData: GraphData = { nodes: [], edges: [] };
       let noteData: any[] = [];
 
-      // Try fetching diagram
+      // Fetch diagram (safe)
       try {
-        const graphRes = await axios.get(
-          `http://localhost:5000/api/diagram/${repo}`
-        );
+        const graphRes = await axios.get(`${API_BASE_URL}/api/diagram/${repo}`);
         graphData = graphRes.data.graph;
       } catch (err: any) {
         if (err.response?.status === 404) {
@@ -58,11 +59,9 @@ function GraphViewInner({ repo }: { repo: string }) {
         } else throw err;
       }
 
-      // Try fetching notes
+      // Fetch notes (safe)
       try {
-        const notesRes = await axios.get(
-          `http://localhost:5000/api/notes/${repo}`
-        );
+        const notesRes = await axios.get(`${API_BASE_URL}/api/notes/${repo}`);
         noteData = notesRes.data;
       } catch (err: any) {
         if (err.response?.status === 404) {
@@ -112,7 +111,7 @@ function GraphViewInner({ repo }: { repo: string }) {
   const saveGraph = async () => {
     if (!graph) return;
     try {
-      await axios.post("http://localhost:5000/api/diagram", { repo, graph });
+      await axios.post(`${API_BASE_URL}/api/diagram`, { repo, graph });
       setIsSaved(true);
       alert("✅ Diagram saved successfully!");
     } catch (err) {
@@ -125,9 +124,7 @@ function GraphViewInner({ repo }: { repo: string }) {
   const loadSavedGraph = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(
-        `http://localhost:5000/api/diagram/saved/${repo}`
-      );
+      const res = await axios.get(`${API_BASE_URL}/api/diagram/saved/${repo}`);
       const saved = res.data.data?.graph;
 
       if (!saved) {
@@ -150,7 +147,7 @@ function GraphViewInner({ repo }: { repo: string }) {
   const handleSaveNote = async () => {
     if (!selectedNode) return;
     try {
-      await axios.post("http://localhost:5000/api/notes", {
+      await axios.post(`${API_BASE_URL}/api/notes`, {
         repo,
         nodeId: selectedNode.id,
         content: noteContent,
@@ -169,7 +166,7 @@ function GraphViewInner({ repo }: { repo: string }) {
     if (!selectedNode) return;
     try {
       await axios.delete(
-        `http://localhost:5000/api/notes/${repo}/${selectedNode.id}`
+        `${API_BASE_URL}/api/notes/${repo}/${selectedNode.id}`
       );
       setNotes((prev) => {
         const newNotes = { ...prev };
