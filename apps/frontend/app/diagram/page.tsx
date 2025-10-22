@@ -9,14 +9,23 @@ function DiagramPageInner() {
   const repo = searchParams.get("repo");
   const loadSaved = searchParams.get("load");
 
-  if (!repo)
+  if (!repo) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
-        <p>No repository specified. Go back to home.</p>
+        <div className="text-center">
+          <p className="mb-2 text-lg">⚠️ No repository specified.</p>
+          <a href="/" className="underline text-blue-400 hover:text-blue-300">
+            Go back to Home
+          </a>
+        </div>
       </div>
     );
+  }
 
-  return <GraphView repo={repo + (loadSaved ? "?load=saved" : "")} />;
+  // Append ?load=saved only if specified
+  const repoParam = loadSaved ? `${repo}?load=saved` : repo;
+
+  return <GraphView repo={repoParam} />;
 }
 
 export default function DiagramPage() {
