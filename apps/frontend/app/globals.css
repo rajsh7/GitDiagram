@@ -2,10 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Optional custom global styles can go below */
+/* -------------------------
+   Base Global Styles
+-------------------------- */
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
   font-family: system-ui, sans-serif;
+  scroll-behavior: smooth;
+}
+
+/* -------------------------
+   Browser-style Search Card
+-------------------------- */
+.card {
+  width: 320px;
+  height: 60px;
+  background: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.03);
+}
+
+.circles,
+.browser {
+  height: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.circles {
+  width: 20%;
+  gap: 8px;
+  padding: 10px;
+}
+
+.c {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: inset 2px 2px 5px rgba(235, 235, 235, 0.356);
+}
+
+.c:first-child {
+  background-color: red;
+}
+
+.c:nth-child(2) {
+  background-color: rgb(204, 167, 4);
+}
+
+.c:last-child {
+  background-color: green;
+}
+
+.browser {
+  width: 80%;
+  padding: 5px;
+  display: flex;
+  gap: 10px;
+}
+
+.chevrons {
+  display: flex;
+  color: black;
+}
+
+.search-bar {
+  position: relative;
+  border: 1px solid #444;
+  border-radius: 5px;
+  padding: 5px 10px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: rgb(88, 88, 88);
+  background: #f5f5f5;
+  box-shadow: inset 2px 2px 2px #05050525;
+}
+
+.search-bar svg {
+  position: absolute;
+  left: 10px;
 }
