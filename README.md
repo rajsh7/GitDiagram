@@ -33,13 +33,12 @@ It allows users to log in securely, load repositories, explore commit relationsh
 - **Frontend (Vercel):** [https://git-diagram-frontend.vercel.app/](https://git-diagram-frontend.vercel.app/)
 - **Backend API (Render):** [https://gitdiagram-pk6l.onrender.com](https://gitdiagram-pk6l.onrender.com)
 
----
 
 ## 🛠️ Project Setup (Local Development)
 
 ### 1. Clone the repository
 
-```bash
+
 git clone https://github.com/rajsh7/GitDiagram.git
 cd GitDiagram
 2. Setup environment variables
@@ -47,42 +46,34 @@ Create .env files for both backend and frontend.
 
 🧩 Backend (apps/backend/.env)
 env
-Copy code
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_generated_jwt_secret
 💡 To generate a strong JWT secret, run this in your terminal:
 
-bash
-Copy code
+
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 🖥️ Frontend (apps/frontend/.env.local)
 env
-Copy code
 NEXT_PUBLIC_API_BASE=https://gitdiagram-pk6l.onrender.com/api
 3. Install dependencies
 From the project root:
 
-bash
-Copy code
 npm install
 Or install individually:
 
-bash
-Copy code
+
 cd apps/backend && npm install
 cd ../frontend && npm install
 4. Run the development servers
 Backend:
 
-bash
-Copy code
+
 cd apps/backend
 npm run dev
 Frontend:
 
-bash
-Copy code
+
 cd apps/frontend
 npm run dev
 Then open your browser to http://localhost:3000
@@ -118,8 +109,7 @@ POST	/api/notes/:repo	Save notes
 GET	/api/notes/:repo	Get notes
 
 🧱 Folder Structure
-lua
-Copy code
+
 GitDiagram/
 ├── apps/
 │   ├── backend/
